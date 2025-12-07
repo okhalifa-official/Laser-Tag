@@ -1,2 +1,2 @@
 # Laser-Tag
-Laser Tag Embedded Project for CS444x Course. This repo contains the description, implementation, requirements ,and code for the project.
+Laser Tag is “high tech” hide-and-seek. Fun laser tag games can be played indoors or outdoors. Players tag each other by "shooting" infrared, just like a TV remote but bigger!
