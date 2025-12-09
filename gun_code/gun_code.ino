@@ -1,18 +1,20 @@
 #include <LiquidCrystal.h>
-bool trigger;
-const int rs = 9, en = 8, d4 = 7, d5 = 6, d6 = 5, d7 = 4;
+bool shot_ready;
+// const int rs = 9, en = 8, d4 = 7, d5 = 6, d6 = 5, d7 = 4;
 const int trigger_pin = 11;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+const int solenoid_pin = 12;
+int press_time;
+// LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 void setup() {
   // put your setup code here, to run once:
-  trigger = false;
+  shot_ready = false;
   Serial.begin(9600);
-  pinMode(12, OUTPUT);
+  pinMode(solenoid_pin, OUTPUT);
   pinMode(trigger_pin, INPUT);
   // set up the LCD's number of columns and rows:
-  lcd.begin(16, 1);
+  // lcd.begin(16, 1);
   // Print a message to the LCD.
-  
+  press_time = -1;
 
 }
 
@@ -21,26 +23,23 @@ void loop() {
   // analog_input = analogRead(A0);
   // Serial.println((analog_input/1024.0)*5);
   // delay(500);
-  Serial.println(digitalRead(trigger_pin), HEX);
-  if((digitalRead(trigger_pin) == HIGH && trigger == false) || (digitalRead(trigger_pin) == LOW && trigger == true)){
-    delay(100);
-    if(digitalRead(trigger_pin) == HIGH){
-      trigger = true;
+  // Serial.println(digitalRead(trigger_pin), HEX);
+  if(digitalRead(trigger_pin)){
+    if(press_time != -1){
+      if(millis() - press_time >= 10){
+        shot_ready = true;
+        digitalWrite(solenoid_pin, HIGH);
+        delay(100);
+        digitalWrite(solenoid_pin, LOW);
+        press_time = -1;
+      }
     }else{
-      trigger = false;
+      if(shot_ready)
+        press_time = -1;
+      else
+        press_time = millis();
     }
   }else{
-    return;
+    shot_ready = false;
   }
-  if(trigger){
-    digitalWrite(12, HIGH);
-    delay(100);
-    digitalWrite(12, LOW);
-    // digitalWrite(12, LOW);
-
-    delay(100);
-    //trigger = false;
-  }
-  lcd.setCursor(0, 0);
-  lcd.print("hello");
 }
